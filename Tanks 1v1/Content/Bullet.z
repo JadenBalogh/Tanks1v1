@@ -1,0 +1,86 @@
+class Bullet : ZilchComponent
+{
+    [Property]
+    var Projectile : Archetype = null; // What we are shooting
+    [Property]
+    var ShotSpeed : Real = 20; // How fast we are shooting it
+    [Property] 
+    var Cooldown : Real = 3;
+    [Property] 
+    var KeyShoot : Keys;
+    [Property] 
+    var Volume : Real = 0.5;
+    
+    var Enabled : Boolean = true;
+    
+    var TimeSinceLast : Real = 0.0;
+    
+    var TimerCount : Integer = 0;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+    
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        if (this.Enabled == true)
+        {
+            if (this.TimeSinceLast > 0.0)
+            {
+                if (this.TimerCount < 25)
+                {
+                    this.ShootBullets();
+                    this.TimerCount += 1;
+                }
+                this.TimeSinceLast -= event.Dt;
+            }
+            else
+            {
+                this.TimeSinceLast = 0.0;
+                
+                this.TimerCount = 0;
+            }
+            
+            if (Zero.Keyboard.KeyIsPressed(this.KeyShoot) && this.TimeSinceLast == 0)
+            {
+                if (this.Owner.Name == "BulletSpawn")
+                {
+                    this.GameSession.VariableStorage.BulletsFired1 += 5;
+                }
+                else
+                {
+                    this.GameSession.VariableStorage.BulletsFired2 += 5;
+                }
+                var soundEffect = SoundCue.Find("RapidFire1");
+                
+                soundEffect.Volume = this.Volume;
+                
+                this.Space.SoundSpace.PlayCue(soundEffect);
+                
+                this.TimeSinceLast = this.Cooldown;
+            }
+        }
+    }
+    
+    function ShootBullets()
+    {
+        if (this.TimerCount % 5 == 0)
+        {
+            var direction = this.Owner.Orientation.WorldForward;
+                
+            direction = Math.Normalize(direction);
+                
+            var position = this.Owner.Transform.WorldTranslation;
+                
+            var bullet = this.Space.CreateAtPosition(this.Projectile, position);
+            
+            if (bullet != null)
+            {
+                bullet.RigidBody.Velocity = direction * this.ShotSpeed;
+            }
+            
+            this.TimerCount += 1;
+        }
+    }
+}

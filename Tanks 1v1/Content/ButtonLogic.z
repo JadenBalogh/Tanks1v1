@@ -1,0 +1,49 @@
+class ButtonLogic : ZilchComponent
+{
+    [Property]
+    var SoundEffect : SoundCue = null;
+    
+    var Active : Boolean = true;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Owner, Events.MouseEnter, this.OnMouseEnter);
+        Zero.Connect(this.Owner, Events.MouseExit, this.OnMouseExit);
+        Zero.Connect(this.Owner, Events.MouseDown, this.OnMouseDown);
+
+        // reduce the alpha
+        this.Owner.Sprite.Color = this.Owner.Sprite.Color +
+                                  Real4(0.0, 0.0, 0.0, 0.25 - this.Owner.Sprite.Color.W);
+    }
+
+    function OnMouseDown(event : ViewportMouseEvent)
+    {
+        if (this.Active == true)
+        {
+            // Become brightest to show clicking
+            this.Owner.Sprite.Color = this.Owner.Sprite.Color +
+                                      Real4(0.0, 0.0, 0.0, 1.0 - this.Owner.Sprite.Color.W);
+        }
+    }
+
+    function OnMouseExit(event : ViewportMouseEvent)
+    {
+        if (this.Active == true)
+        {
+            // Become dullest to allow it to fade into the background
+            this.Owner.Sprite.Color = this.Owner.Sprite.Color +
+                                      Real4(0.0, 0.0, 0.0, 0.25 - this.Owner.Sprite.Color.W);
+        }
+    }
+
+    function OnMouseEnter(event : ViewportMouseEvent)
+    {
+        if (this.Active == true)
+        {
+            // Become brighter to show you are hovering over the button
+            this.Owner.Sprite.Color = this.Owner.Sprite.Color +
+                                      Real4(0.0, 0.0, 0.0, 0.75 - this.Owner.Sprite.Color.W);
+            this.Space.SoundSpace.PlayCue(this.SoundEffect);
+        }
+    }
+}

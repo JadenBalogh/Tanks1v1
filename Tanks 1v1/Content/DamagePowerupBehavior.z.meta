@@ -1,0 +1,8 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "DamagePowerupBehavior",
+		uint64 ResourceId = 5693e3fef8a5aec4,
+	},
+},

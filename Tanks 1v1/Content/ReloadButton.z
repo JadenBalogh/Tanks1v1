@@ -1,0 +1,80 @@
+class ReloadButton : ZilchComponent
+{
+    [Dependency]
+    var Sprite: Sprite;
+    
+    [Property] 
+    var ReloadButton : Keys = Keys.R;
+    
+    [Property] 
+    var ReloadButtonOptional : Keys = Keys.Enter;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        Zero.Connect(this.Owner, Events.MouseEnter, this.OnMouseEnter);
+        Zero.Connect(this.Owner, Events.MouseExit, this.OnMouseExit);
+        Zero.Connect(this.Owner, Events.MouseDown, this.OnMouseDown);
+        Zero.Connect(this.Owner, Events.MouseUp, this.OnMouseUp);
+
+        // reduce the alpha
+        this.Owner.Sprite.Color = this.Owner.Sprite.Color +
+                                  Real4(0.0, 0.0, 0.0, 0.25 - this.Owner.Sprite.Color.W);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        if (Zero.Keyboard.KeyIsPressed(this.ReloadButton) || Zero.Keyboard.KeyIsPressed(this.ReloadButtonOptional))
+        {
+            this.GameSession.VariableStorage.Winner = 1;
+            this.GameSession.VariableStorage.Health1 = 0;
+            this.GameSession.VariableStorage.Health2 = 0;
+            this.GameSession.VariableStorage.CannonsFired1 = 0;
+            this.GameSession.VariableStorage.CannonsFired2 = 0;
+            this.GameSession.VariableStorage.BulletsFired1 = 0;
+            this.GameSession.VariableStorage.BulletsFired2 = 0;
+            this.GameSession.VariableStorage.PowerupsAmount1 = 0;
+            this.GameSession.VariableStorage.PowerupsAmount2 = 0;
+            this.GameSession.VariableStorage.Time = 0;
+            this.Space.ReloadLevel();
+        }
+    }
+    
+    function OnMouseUp(event : ViewportMouseEvent)
+    {
+        // Destroy button upon clicking
+        this.GameSession.VariableStorage.Winner = 1;
+        this.GameSession.VariableStorage.Health1 = 0;
+        this.GameSession.VariableStorage.Health2 = 0;
+        this.GameSession.VariableStorage.CannonsFired1 = 0;
+        this.GameSession.VariableStorage.CannonsFired2 = 0;
+        this.GameSession.VariableStorage.BulletsFired1 = 0;
+        this.GameSession.VariableStorage.BulletsFired2 = 0;
+        this.GameSession.VariableStorage.PowerupsAmount1 = 0;
+        this.GameSession.VariableStorage.PowerupsAmount2 = 0;
+        this.GameSession.VariableStorage.Time = 0;
+        this.Space.ReloadLevel();
+        this.Owner.Destroy();
+    }
+
+    function OnMouseDown(event : ViewportMouseEvent)
+    {
+        // Become brightest to show clicking
+        this.Owner.Sprite.Color = this.Owner.Sprite.Color +
+                                    Real4(0.0, 0.0, 0.0, 1.0 - this.Owner.Sprite.Color.W);
+    }
+
+    function OnMouseExit(event : ViewportMouseEvent)
+    {
+        // Become dullest to allow it to fade into the background
+        this.Owner.Sprite.Color = this.Owner.Sprite.Color +
+                                    Real4(0.0, 0.0, 0.0, 0.25 - this.Owner.Sprite.Color.W);
+    }
+
+    function OnMouseEnter(event : ViewportMouseEvent)
+    {
+        // Become brighter to show you are hovering over the button
+        this.Owner.Sprite.Color = this.Owner.Sprite.Color +
+                                    Real4(0.0, 0.0, 0.0, 0.75 - this.Owner.Sprite.Color.W);
+    }
+}

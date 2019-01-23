@@ -1,0 +1,45 @@
+class AssignValues : ZilchComponent
+{
+    var WinnerText : Cog = null;
+    var Time : Cog = null;
+    var Health1 : Cog = null;
+    var Health2 : Cog = null;
+    var BulletsFired1 : Cog = null;
+    var BulletsFired2 : Cog = null;
+    var CannonsFired1 : Cog = null;
+    var CannonsFired2 : Cog = null;
+    var PowerupsAmount1 : Cog = null;
+    var PowerupsAmount2 : Cog = null;
+    function Initialize(init : CogInitializer)
+    {
+        this.WinnerText = this.Space.FindObjectByName("WinnerText1");
+        this.Time = this.Space.FindObjectByName("TimeText");
+        this.Health1 = this.Space.FindObjectByName("A2");
+        this.Health2 = this.Space.FindObjectByName("B2");
+        this.BulletsFired1 = this.Space.FindObjectByName("A3");
+        this.BulletsFired2 = this.Space.FindObjectByName("B3");
+        this.CannonsFired1 = this.Space.FindObjectByName("A4");
+        this.CannonsFired2 = this.Space.FindObjectByName("B4");
+        this.PowerupsAmount1 = this.Space.FindObjectByName("A5");
+        this.PowerupsAmount2 = this.Space.FindObjectByName("B5");
+        
+        if (this.GameSession.VariableStorage.Winner == 1)
+        {
+            this.WinnerText.SpriteText.Text = "Winner: Player 1";
+        }
+        else
+        {
+            this.WinnerText.SpriteText.Text = "Winner: Player 2";
+        }
+        this.Time.SpriteText.Text = "Match Duration: `this.GameSession.VariableStorage.Time` seconds";
+        
+        this.Health1.SpriteText.Text = "Health: `this.GameSession.VariableStorage.Health1`";
+        this.Health2.SpriteText.Text = "Health: `this.GameSession.VariableStorage.Health2`";
+        this.BulletsFired1.SpriteText.Text = "Bullets Fired: `this.GameSession.VariableStorage.BulletsFired1`";
+        this.BulletsFired2.SpriteText.Text = "Bullets Fired: `this.GameSession.VariableStorage.BulletsFired2`";
+        this.CannonsFired1.SpriteText.Text = "Cannons Fired: `this.GameSession.VariableStorage.CannonsFired1`";
+        this.CannonsFired2.SpriteText.Text = "Cannons Fired: `this.GameSession.VariableStorage.CannonsFired2`";
+        this.PowerupsAmount1.SpriteText.Text = "PowerUps Found: `this.GameSession.VariableStorage.PowerupsAmount1`";
+        this.PowerupsAmount2.SpriteText.Text = "PowerUps Found: `this.GameSession.VariableStorage.PowerupsAmount2`";
+    }
+}

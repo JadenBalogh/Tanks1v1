@@ -1,0 +1,73 @@
+class Artillery : ZilchComponent
+{
+    [Property]
+    var Projectile : Archetype = null; // What we are shooting
+    [Property]
+    var ShotSpeed : Real = 20; // How fast we are shooting it
+    [Property] 
+    var Cooldown : Real = 3;
+    [Property] 
+    var KeyShoot : Keys;
+    
+    var Enabled : Boolean = true;
+    
+    var TimeSinceLast : Real = 0.0;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);  
+        
+        var timeSinceLast = 0.0;       
+    }
+    
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        if (this.Enabled == true)
+        {
+            if (this.TimeSinceLast > 0.0)
+            {
+                this.TimeSinceLast -= event.Dt;
+            }
+            else
+            {
+                this.TimeSinceLast = 0.0;
+            }
+            
+            if (Zero.Keyboard.KeyIsPressed(this.KeyShoot) && this.TimeSinceLast == 0)
+            {
+                if (this.Owner.Name == "ArtillerySpawn")
+                {
+                    this.GameSession.VariableStorage.CannonsFired1 += 1;
+                }
+                else
+                {
+                    this.GameSession.VariableStorage.CannonsFired2 += 1;
+                }
+                
+                // Get the direction of the player
+                var direction = this.Owner.Orientation.WorldForward;
+                // Make sure we only get the direction of the vector
+                direction = Math.Normalize(direction);
+                
+                var position = this.Owner.Transform.WorldTranslation;
+                
+                //Console.WriteLine(position);
+                
+                // Create the bullet at the Player's location
+                
+                var artillery = this.Space.CreateAtPosition(this.Projectile, position);
+                
+                this.Space.SoundSpace.PlayCue(SoundCue.Find("ArtilleryFire1"));
+                
+                // Make sure it was created
+                if (artillery != null)
+                {
+                    // Make the bullet go in that direction and scaled by the shot speed
+                    artillery.RigidBody.Velocity = direction * this.ShotSpeed;
+                }
+                
+                this.TimeSinceLast = this.Cooldown;
+            }
+        }
+    }
+}

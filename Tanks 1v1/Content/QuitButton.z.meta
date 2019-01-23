@@ -1,0 +1,8 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "QuitButton",
+		uint64 ResourceId = 57fedbf34d5d66c7,
+	},
+},

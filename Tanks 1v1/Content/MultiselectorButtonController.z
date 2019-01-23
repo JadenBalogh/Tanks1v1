@@ -1,0 +1,56 @@
+class MultiselectorButtonController : ZilchComponent
+{
+    var ButtonNames : Array[String] = new Array[String]();
+    
+    var Buttons : Array[Cog] = new Array[Cog]();
+    
+    var Level : Level = null;
+    var MapPreview : SpriteSource = null;
+    
+    [Property]
+    var Button1 : String;
+    [Property]
+    var Button2 : String;
+    [Property]
+    var Button3 : String;
+    [Property]
+    var Button4 : String;
+    [Property]
+    var Button5 : String;
+    
+    function Initialize(init : CogInitializer)
+    {
+        this.ButtonNames.Add(this.Button1);
+        this.ButtonNames.Add(this.Button2);
+        this.ButtonNames.Add(this.Button3);
+        this.ButtonNames.Add(this.Button4);
+        this.ButtonNames.Add(this.Button5);
+        
+        for (var i = 0; i < this.ButtonNames.Count; ++i)
+        {
+            this.Buttons.Add(this.Space.FindObjectByName(this.ButtonNames[i]));
+        }
+        
+        Console.WriteLine(this.Buttons);
+    }
+    
+    function Select(active : Cog)
+    {
+        for (var i = 0; i < this.Buttons.Count; ++i)
+        {
+            if (this.Buttons[i] == active)
+            {
+                this.Buttons[i].ButtonLogic.Active = false;
+                this.Buttons[i].Sprite.Color = this.Buttons[i].Sprite.Color + Real4(0.0, 0.0, 0.0, 1.0 - this.Buttons[i].Sprite.Color.W);
+                this.Level = this.Buttons[i].MultiselectorButton.Level;
+                this.MapPreview = this.Buttons[i].MultiselectorButton.MapPreview;
+            
+            }
+            else
+            {
+                this.Buttons[i].ButtonLogic.Active = true;
+                this.Buttons[i].Sprite.Color = this.Buttons[i].Sprite.Color + Real4(0.0, 0.0, 0.0, 0.25 - this.Buttons[i].Sprite.Color.W);
+            }
+        }
+    }
+}

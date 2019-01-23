@@ -1,0 +1,8 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "PlaySelectedLevelButton",
+		uint64 ResourceId = 5771a3844edb96ae,
+	},
+},

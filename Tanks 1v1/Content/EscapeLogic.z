@@ -1,0 +1,38 @@
+class EscapeLogic : ZilchComponent
+{
+    // The level that our Hud is contained within
+    [Property]
+    var MenuLevel : Level = null;
+    [Property]
+    var SpaceArchetype : Archetype = Archetype.Find("Space");
+    
+    // Store the space where our Hud is so that we can access and destroy it
+    var MenuSpace : Space = null;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.GameSession, Events.GameRequestQuit, this.OnGameRequestQuit);
+    }
+    
+    function OnGameRequestQuit(event : GameEvent)
+    {
+        // Let the engine know that this function will handle behavior for the Esc key
+        event.Handled = true;
+        
+        // Create the hud space and then load our hud level into it
+        if (this.MenuSpace == null)
+        {
+            this.MenuSpace = this.GameSession.CreateNamedSpace("MenuSpace", this.SpaceArchetype);
+            this.MenuSpace.LoadLevel(this.MenuLevel);
+        }
+    }
+    
+    function Destroyed()
+    {
+        // Make sure to clean up the Hud space when we get destroyed
+        if(this.MenuSpace != null)
+        {
+            this.MenuSpace.Destroy();
+        }
+    }
+}

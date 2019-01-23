@@ -1,0 +1,25 @@
+class ChangeLevelButton : ZilchComponent
+{
+    [Property]
+    var LevelToLoad : Level;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Owner, Events.MouseUp, this.OnMouseUp);
+    }
+
+    function OnMouseUp(event : ViewportMouseEvent)
+    {
+        this.GameSession.VariableStorage.Winner = 1;
+        this.GameSession.VariableStorage.Health1 = 0;
+        this.GameSession.VariableStorage.Health2 = 0;
+        this.GameSession.VariableStorage.CannonsFired1 = 0;
+        this.GameSession.VariableStorage.CannonsFired2 = 0;
+        this.GameSession.VariableStorage.BulletsFired1 = 0;
+        this.GameSession.VariableStorage.BulletsFired2 = 0;
+        this.GameSession.VariableStorage.PowerupsAmount1 = 0;
+        this.GameSession.VariableStorage.PowerupsAmount2 = 0;
+        this.GameSession.VariableStorage.Time = 0;
+        this.Space.LoadLevel(this.LevelToLoad);
+    }
+}

@@ -1,0 +1,20 @@
+ImageContent = 
+{
+	SpriteSourceBuilder = 
+	{
+		string Name = "crate3",
+		uint64 ResourceId = 561953162cdba753,
+		uint64 AtlasId = 5274cf95e4a661fd,
+		uint FrameSizeX = 150,
+		uint FrameSizeY = 150,
+		uint FrameCount = 1,
+		float FrameDelay = 0.0833333358,
+		float OriginX = 75,
+		float OriginY = 75,
+		float PixelsPerUnit = 64,
+		bool Smoothing = true,
+		bool Looping = true,
+		Vec4 Slices = [0, 0, 0, 0],
+		SpriteFill Fill = Tiled,
+	},
+},

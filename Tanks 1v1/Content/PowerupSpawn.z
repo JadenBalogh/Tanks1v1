@@ -1,0 +1,61 @@
+class PowerupSpawn : ZilchComponent
+{
+    [Property] 
+    var SpawnTime : Real = 16.0;
+    var TimeSinceLast : Real = 6.0;
+    
+    var BonusType : Archetype = null;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        if (this.TimeSinceLast > 0.0)
+        {
+            this.TimeSinceLast -= event.Dt;
+        }
+        else
+        {
+            this.TimeSinceLast = 0.0;
+        }
+        
+        if (this.TimeSinceLast == 0)
+        {
+            this.SpawnPowerup();
+            this.TimeSinceLast = this.SpawnTime;
+        }
+    }
+    
+    function SpawnPowerup()
+    {
+        var randNumGen = new Random();
+        var randPosY = randNumGen.Range(-15.0, 15.0);
+        //Console.WriteLine("Pos = `randPosY`");
+        
+        var randPosX = randNumGen.Range(-18.0, 18.0);
+        //Console.WriteLine("Pos = `randPosX`");
+        
+        var randType = randNumGen.DieRoll(3);
+        //Console.WriteLine("Type = `randType`");
+        
+        var spawnPos = Real3(randPosX, randPosY, 0.0);
+        
+        if (randType == 1)
+        {
+            this.BonusType = Archetype.HealthPower;
+        }
+        else if (randType == 2)
+        {
+            this.BonusType = Archetype.SpeedPower;
+        }
+        else if (randType == 3)
+        {
+            this.BonusType = Archetype.DamagePower;
+        }
+        
+        this.Space.CreateAtPosition(this.BonusType, spawnPos);
+    }
+}

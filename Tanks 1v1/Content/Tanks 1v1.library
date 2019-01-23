@@ -1,0 +1,7 @@
+ContentLibrary = 
+{
+	string Name = "Tanks 1v1",
+	uint64 LibraryId = 560543d71fc625cf,
+	string SourceControlType = "",
+	bool ReadOnly = false,
+},

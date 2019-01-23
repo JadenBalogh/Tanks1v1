@@ -1,0 +1,22 @@
+class MultiselectorButton : ZilchComponent
+{
+    var Controller : Cog = null;
+    
+    [Property]
+    var MapPreview : SpriteSource = null;
+    
+    [Property]
+    var Level : Level = null;
+    
+    function Initialize(init : CogInitializer)
+    {
+        this.Controller = this.Space.FindObjectByName("Controller");
+        
+        Zero.Connect(this.Owner, Events.MouseDown, this.OnMouseDown);
+    }
+
+    function OnMouseDown(event : ViewportMouseEvent)
+    {
+        this.Controller.MultiselectorButtonController.Select(this.Owner);
+    }
+}

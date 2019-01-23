@@ -1,0 +1,13 @@
+class VariableStorage : ZilchComponent
+{
+    var Winner : Integer = 1;
+    var Health1 : Real;
+    var Health2 : Real;
+    var CannonsFired1 : Integer;
+    var CannonsFired2 : Integer;
+    var BulletsFired1 : Integer;
+    var BulletsFired2 : Integer;
+    var PowerupsAmount1 : Integer;
+    var PowerupsAmount2 : Integer;
+    var Time : Real;
+}

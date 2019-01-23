@@ -1,0 +1,71 @@
+class DamagePowerupBehavior : ZilchComponent
+{
+    [Property] 
+    var Lifetime : Real = 12.0;
+    var DeathTimer : Real = 0.0;
+    
+    [Property] 
+    var BuffDuration : Real = 7.5;
+    
+    var DamageEffect : Archetype = Archetype.Find("DamageEffect");
+    
+    var Used : Boolean = false;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        
+        Zero.Connect(this.Owner, Events.CollisionStarted, this.OnCollisionStarted);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        this.DeathTimer += event.Dt;
+        
+        if (this.DeathTimer >= this.Lifetime)
+        {
+            this.Owner.Destroy();
+        }
+    }
+    
+    function OnCollisionStarted(event : CollisionEvent)
+    {
+        if (event.OtherObject.Name == "Bullet" || event.OtherObject.Name == "Artillery")
+        {
+            return;
+        }
+        
+        if (this.Used == false)
+        {
+            this.Used = true;
+            
+            var otherObject = event.OtherObject;
+            
+            if (otherObject.Name == "Player1" || otherObject.Name == "Player2")
+            {
+                Console.WriteLine("Got Me");
+                if (otherObject.Name == "Player1")
+                {
+                    this.GameSession.VariableStorage.PowerupsAmount1 += 1;
+                }
+                else
+                {
+                    this.GameSession.VariableStorage.PowerupsAmount2 += 1;
+                }
+                otherObject.PlayerInfo.ShieldBoosted = true;
+                otherObject.PlayerInfo.OnTimer = false;
+                otherObject.PlayerInfo.ShieldBoostTimer = this.BuffDuration;
+                
+                otherObject.PlayerInfo.BoostActive = true;
+                otherObject.PlayerInfo.BasicBoostTimer = this.BuffDuration;
+                otherObject.PlayerInfo.BoostType = this.DamageEffect;
+                
+                this.Owner.Destroy();
+            }
+            else if (otherObject.Name == ("CrateSections") || otherObject.Name == ("Rock"))
+            {
+                this.Owner.Destroy();
+            }
+        }
+    }
+}

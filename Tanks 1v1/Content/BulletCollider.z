@@ -1,0 +1,46 @@
+class BulletCollider : ZilchComponent
+{
+    [Property]
+    var Projectile : Archetype = null;
+    
+    [Property] 
+    var Volume : Real = 0.5;
+    
+    [Property]
+    var DeathTime : Real = 0.5;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        
+        Zero.Connect(this.Owner, Events.CollisionStarted,     this.OnCollisionStarted);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        this.DeathTime -= event.Dt;
+        if (this.DeathTime <= 0)
+        {
+            this.Owner.Destroy();
+        }
+    }
+    
+    function OnCollisionStarted(event : CollisionEvent)
+    {
+        var otherObject = event.OtherObject;
+        
+        if (otherObject.Name != "BasicParticleEffect")
+        {
+            var soundEffect = SoundCue.Find("Impact1");
+            
+            soundEffect.Volume = this.Volume;
+            
+            this.Space.SoundSpace.PlayCue(soundEffect);
+            
+            this.Owner.Destroy();
+            
+            var pos = this.Owner.Transform.WorldTranslation;
+            this.Space.CreateAtPosition(this.Projectile, pos);
+        }
+    }
+}

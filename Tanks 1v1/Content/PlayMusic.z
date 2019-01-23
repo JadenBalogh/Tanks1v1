@@ -1,0 +1,40 @@
+class PlayMusic : ZilchComponent
+{
+    var BackgroundMusicObject : Cog = null;
+    
+    function Initialize(init : CogInitializer)
+    {
+        //Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        
+        Zero.Connect(Zero.Keyboard, Events.KeyUp, this.OnKeyUp);
+        
+        this.BackgroundMusicObject = this.Space.FindObjectByName("BackgroundMusic");
+        // If the there is no background music
+        if(this.BackgroundMusicObject == null)
+        {
+            // Make some and
+            this.BackgroundMusicObject = this.Space.Create(Archetype.Find("BackgroundMusic"));
+            // Make it persist
+            this.BackgroundMusicObject.Persistent = true;
+        }
+        // If we are not yet playing the music
+        if (this.BackgroundMusicObject.SoundEmitter.IsPlaying() == false)
+        {
+            // Get the music playing
+            this.BackgroundMusicObject.SimpleSound.Play();
+        }
+    }
+    
+    function OnKeyUp(event : KeyboardEvent)
+    {
+        // Pause/Resume all sounds in the space:
+        if (event.Key == Keys.M)
+        {
+            this.Space.SoundSpace.Pause = !this.Space.SoundSpace.Pause;
+        }
+    }
+    
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+    }
+}

@@ -1,0 +1,21 @@
+class PlaySelectedLevelButton : ZilchComponent
+{
+    var Level : Level = Level.Find("Level1");
+    var Controller : Cog;
+    
+    function Initialize(init : CogInitializer)
+    {
+        this.Controller = this.Space.FindObjectByName("Controller");
+        
+        Zero.Connect(this.Owner, Events.MouseUp, this.OnMouseUp);
+    }
+    
+    function OnMouseUp(event : ViewportMouseEvent)
+    {
+        if (this.Controller.MultiselectorButtonController.Level != null)
+        {
+            this.Level = this.Controller.MultiselectorButtonController.Level;
+        }
+        this.Space.LoadLevel(this.Level);
+    }
+}

@@ -1,0 +1,8 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "EscapeLogic",
+		uint64 ResourceId = 57fee4b80ff6b691,
+	},
+},

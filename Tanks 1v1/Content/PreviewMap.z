@@ -1,0 +1,16 @@
+class PreviewMap : ZilchComponent
+{
+    var Controller : Cog;
+    
+    function Initialize(init : CogInitializer)
+    {
+        this.Controller = this.Space.FindObjectByName("Controller");
+        
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        this.Owner.Sprite.SpriteSource = this.Controller.MultiselectorButtonController.MapPreview;
+    }
+}

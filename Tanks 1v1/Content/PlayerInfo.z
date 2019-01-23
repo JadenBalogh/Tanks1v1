@@ -1,0 +1,184 @@
+class PlayerInfo : ZilchComponent
+{
+    [Property]
+    var HealthValue : Real = 30;
+    var StillAlive : Boolean = true;
+    
+    [Property] 
+    var BulletDamage : Real = 2.0;
+    [Property] 
+    var ArtilleryDamage : Real = 6.0;
+    
+    [Property]
+    var DeathType : Archetype = null;
+    
+    [Property] 
+    var LevelChangeTime : Real = 3.0;
+    var ChangeWait : Real = 0.0;
+    
+    var Level1: Level = Level.Find("Level1");
+    var GameOver: Level = Level.Find("GameOver");
+    
+    var ShieldBoosted : Boolean = false;
+    var OnTimer : Boolean = false;
+    var ShieldBoostTimer : Real = 7.5;
+    
+    var BoostActive : Boolean = false;
+    var BoostType : Archetype = null;
+    var BasicBoostTimer : Real = 7.5;
+    
+    var Time : Real = 0;
+    
+    function Initialize(init : CogInitializer)
+    {
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+        
+        Zero.Connect(this.Owner, Events.CollisionStarted, this.OnCollisionStarted);
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        this.Time += event.Dt;
+        
+        //Console.WriteLine("test");
+        //Console.WriteLine("Bullet : `this.BulletDamage`, Artillery: `this.ArtilleryDamage`");
+        if (this.Owner.Name == "Player1")
+        {
+            var healthDisplay = this.Space.FindObjectByName("HealthPlayer1");
+            healthDisplay.Transform.Translation = Real3(
+            this.Owner.Transform.Translation.X,
+            this.Owner.Transform.Translation.Y,
+            0.2);
+            healthDisplay.SpriteText.Text = "`this.HealthValue`";
+        }
+        else if (this.Owner.Name == "Player2")
+        {
+            var healthDisplay = this.Space.FindObjectByName("HealthPlayer2");
+            healthDisplay.Transform.Translation = Real3(
+            this.Owner.Transform.Translation.X,
+            this.Owner.Transform.Translation.Y,
+            0.2);
+            healthDisplay.SpriteText.Text = "`this.HealthValue`";
+        }
+        
+        if (this.ShieldBoosted == true)
+        {
+            if (this.OnTimer == false)
+            {
+                this.BulletDamage = this.BulletDamage / 2;
+                this.ArtilleryDamage = this.ArtilleryDamage / 2;
+                
+                this.OnTimer = true;
+            }
+            
+            var pos = this.Owner.Transform.WorldTranslation;
+            
+            this.Space.CreateAtPosition(this.BoostType, pos);
+            
+            this.ShieldBoostTimer -= event.Dt;
+            
+            if (this.ShieldBoostTimer <= 0)
+            {
+                this.BulletDamage = this.BulletDamage * 2;
+                this.ArtilleryDamage = this.ArtilleryDamage * 2;
+                
+                this.ShieldBoosted = false;
+            }
+        }
+        
+        if (this.BoostActive == true)
+        {
+            var pos = this.Owner.Transform.WorldTranslation + Real3(0.0, 0.0, 1.0);
+            //Console.WriteLine(pos);
+            
+            this.Space.CreateAtPosition(this.BoostType, pos);
+            
+            this.BasicBoostTimer -= event.Dt;
+            
+            if (this.BasicBoostTimer <= 0)
+            {
+                this.BoostActive = false;
+            }
+        }
+        
+        if (this.HealthValue <= 0)
+        {
+            if (this.StillAlive == true)
+            {
+                this.Space.SoundSpace.PlayCue(SoundCue.Find("Explosion1"));
+                
+                var pos = this.Owner.Transform.WorldTranslation;
+                this.Space.CreateAtPosition(this.DeathType, pos);
+                
+                this.Owner.Sprite.Visible = false;
+                
+                this.DisableUnit();
+            }
+            
+            if (this.ChangeWait >= this.LevelChangeTime)
+            {
+                this.GameSession.VariableStorage.Time = this.Time;
+                if (this.Owner.Name == "Player1")
+                {
+                    this.GameSession.VariableStorage.Health1 = 0;
+                    var other = this.Space.FindObjectByName("Player2");
+                    this.GameSession.VariableStorage.Health2 = other.PlayerInfo.HealthValue;
+                }
+                else
+                {
+                    this.GameSession.VariableStorage.Health2 = 0;
+                    var other = this.Space.FindObjectByName("Player1");
+                    this.GameSession.VariableStorage.Health1 = other.PlayerInfo.HealthValue;
+                }
+                this.Space.LoadLevel(this.GameOver);
+            }
+            
+            this.ChangeWait += event.Dt;
+            
+            this.StillAlive = false;
+        }
+    }
+    
+    function OnCollisionStarted(event : CollisionEvent)
+    {
+        //Console.WriteLine("test");
+        
+        var otherObject = event.OtherObject;
+        
+        if (otherObject.Name == "Bullet")
+        {
+            //Console.WriteLine("bullet collided with player");
+            this.HealthValue -= this.BulletDamage;
+        }
+        else if (otherObject.Name == "Artillery")
+        {
+            //Console.WriteLine("artillery collided with player");
+            this.HealthValue -= this.ArtilleryDamage;
+        }
+        else if (otherObject.Name.Contains("Crate"))
+        {
+            //Console.WriteLine("wall collided with player");
+        }
+        
+        if (this.HealthValue < 0)
+        {
+            this.HealthValue = 0;
+        }
+        
+        //Console.WriteLine("`this.Owner.Name` - `this.HealthValue`");
+    }
+    
+    function DisableUnit()
+    {
+        this.Owner.Transform.Translation = Real3(100.0, 100.0, 0.0);
+        var artKill = this.Space.FindObjectByName("ArtillerySpawn");
+        artKill.Artillery.Enabled = false;
+        var bulKill = this.Space.FindObjectByName("BulletSpawn");
+        bulKill.Bullet.Enabled = false;
+        var artKill2 = this.Space.FindLastObjectByName("ArtillerySpawn2");
+        artKill2.Artillery.Enabled = false;
+        var bulKill2 = this.Space.FindLastObjectByName("BulletSpawn2");
+        bulKill2.Bullet.Enabled = false;
+        //Console.WriteLine("Disabled!!!");
+    }
+}

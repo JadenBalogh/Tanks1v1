@@ -1,0 +1,26 @@
+class ReloadGame : ZilchComponent
+{
+    [Property] 
+    var ReloadButton : Keys = Keys.R;
+    [Property] 
+    var ReloadButtonOptional : Keys = Keys.T;
+    
+    var Level1: Level = Level.Find("Level1");
+    
+    function Initialize(init : CogInitializer)
+    {
+        
+    }
+
+    function OnLogicUpdate(event : UpdateEvent)
+    {
+        if (Zero.Keyboard.KeyIsPressed(this.ReloadButton))
+        {
+            this.Space.LoadLevel(this.Level1);
+        }
+        if (Zero.Keyboard.KeyIsPressed(this.ReloadButtonOptional))
+        {
+            this.Space.LoadLevel(this.Level1);
+        }
+    }
+}

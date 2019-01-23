@@ -1,0 +1,8 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "ChangeLevelButton",
+		uint64 ResourceId = 57fee76b81ccb3a2,
+	},
+},

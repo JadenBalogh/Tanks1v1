@@ -1,0 +1,20 @@
+ImageContent = 
+{
+	SpriteSourceBuilder = 
+	{
+		string Name = "Brick1",
+		uint64 ResourceId = 57718c7bd024629a,
+		uint64 AtlasId = 5274cf95e4a661fd,
+		uint FrameSizeX = 403,
+		uint FrameSizeY = 402,
+		uint FrameCount = 1,
+		float FrameDelay = 0.0833333358,
+		float OriginX = 201,
+		float OriginY = 201,
+		float PixelsPerUnit = 64,
+		bool Smoothing = true,
+		bool Looping = true,
+		Vec4 Slices = [0, 0, 0, 0],
+		SpriteFill Fill = Tiled,
+	},
+},

@@ -1,0 +1,8 @@
+TextContent = 
+{
+	ZilchScriptBuilder = 
+	{
+		string Name = "MultiselectorButtonController",
+		uint64 ResourceId = 577fe9225e26f5dc,
+	},
+},

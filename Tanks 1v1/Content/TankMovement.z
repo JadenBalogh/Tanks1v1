@@ -1,0 +1,104 @@
+class TankMovement : ZilchComponent
+{
+    [Property]
+    var Speed : Real = 1.0; // How fast you move forward
+    [Property]
+    var RotationSpeed : Real = 1.0; // How fast you rotate
+    [Property] 
+    var KeyForward : Keys;
+    [Property] 
+    var KeyBackwards : Keys;
+    [Property] 
+    var KeyLeft : Keys;
+    [Property] 
+    var KeyRight : Keys;
+    
+    var SpeedBoosted : Boolean = false;
+    var OnTimer : Boolean = false;
+    var SpeedBoostTimer : Real = 7.5;
+    
+    function Initialize(init : CogInitializer)
+    {
+        //Connect to logic update
+        Zero.Connect(this.Space, Events.LogicUpdate, this.OnLogicUpdate);
+    }
+    
+    function OnLogicUpdate(event : UpdateEvent)
+    {        
+        this.Owner.RigidBody.Velocity = Real3(0.0, 0.0, 0.0);
+        //Console.WriteLine(this.Owner.Transform.WorldTranslation);
+        
+        if (this.SpeedBoosted == true)
+        {
+            if (this.OnTimer == false)
+            {
+                if (this.Owner.Name == "Player1")
+                {
+                this.Speed += 3;
+                }
+                else
+                {
+                    this.Speed -= 3;
+                }
+                this.OnTimer = true;
+            }
+            
+            this.SpeedBoostTimer -= event.Dt;
+            
+            if (this.SpeedBoostTimer <= 0)
+            {
+                if (this.Owner.Name == "Player1")
+                {
+                this.Speed -= 3;
+                }
+                else
+                {
+                    this.Speed += 3;
+                }
+                this.SpeedBoosted = false;
+            }
+        }
+        
+        
+        // The angle we are going to rotate by
+        var rotationAngles = local Real3(0.0, 0.0, 0.0);
+        
+        // If the Left Arrow key is held down
+        if (Zero.Keyboard.KeyIsDown(this.KeyLeft))
+        {
+            rotationAngles.Z += this.RotationSpeed;
+        }
+        // If the Right Arrow key is held down
+        if (Zero.Keyboard.KeyIsDown(this.KeyRight))
+        {
+            rotationAngles.Z -= this.RotationSpeed;
+        }
+        
+        // Apply the calculated rotation first so movement is not base of the rotation from the previous frame
+        this.Owner.Transform.RotateAnglesWorld(rotationAngles * event.Dt);
+        
+        // The direction we want to move in
+        var movement = local Real3(0.0, 0.0, 0.0);
+        // Get our facing direction from the Orientation component
+        var forwardDirection = this.Owner.Orientation.WorldForward;
+        
+        // If the Up Arrow key is held down
+        if (Zero.Keyboard.KeyIsDown(this.KeyForward))
+        {
+            // Set the movement direction to the direction the player is facing
+            movement += forwardDirection;
+        }
+        // If the Down Arrow key is held down
+        else if(Zero.Keyboard.KeyIsDown(this.KeyBackwards))
+        {
+            // Set the movement direction to the opposite of the direction the player is facing
+            movement -= forwardDirection;
+        }
+        
+        // Make sure the we only get the direction of the vector:
+        movement = Math.Normalize(movement);
+        
+        // Apply the recorded movement using the new rotation
+        this.Owner.Transform.Translation += movement * this.Speed * event.Dt;
+    }
+}
